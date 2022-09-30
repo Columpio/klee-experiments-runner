@@ -180,14 +180,12 @@ def main():
   LOGGER = open(os.path.join(KLEE.BENCHMARKS_PATH, "run-exps.log"), 'w')
   sys.stdout = LOGGER
   sys.stderr = LOGGER
-  benchmarks = [entry for entry in os.scandir(KLEE.BENCHMARKS_PATH) if not entry.name.startswith(".") and entry.name.endswith(".bc")]
+  benchmarks = [entry for entry in os.scandir(KLEE.BENCHMARKS_PATH) if not entry.name.startswith(".") and entry.name.endswith(".bc") and not has_both_solutions(entry)]
   bd_klee = KLEE("No___Blacklist", flags=["--disable-blacklist"])
   my_klee = KLEE("With_Blacklist")
   result_comparator = ResultComparator(bd_klee, my_klee, KleeStatsDiffer())
   benchmarks_len = len(benchmarks)
   for i, benchmark in enumerate(benchmarks):
-    if has_both_solutions(benchmark):
-      continue
     print_estimated_time_left(benchmarks_len - i)
     bd_klee.run(benchmark)
     my_klee.run(benchmark)
